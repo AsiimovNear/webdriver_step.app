@@ -2,6 +2,10 @@ from selenium import webdriver
 import imaplib
 import time
 
+print("created by @rich4rever")
+print("telegram - https://t.me/asiimov_near")
+print("chat - https://t.me/AsiimovChat")
+
 link = f"https://app.step.app?r={input('Enter ref code: ')}"
 
 
