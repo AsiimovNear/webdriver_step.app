@@ -1,12 +1,10 @@
-from selenium import webdriver
+from seleniumwire import webdriver
 import imaplib
 import time
+from random import choice
 
-print("created by @rich4rever")
-print("telegram - https://t.me/asiimov_near")
-print("chat - https://t.me/AsiimovChat")
-
-link = f"https://app.step.app?r={input('Enter ref code: ')}"
+link = f"https://app.step.app?r={input('Ваш реферальный код: ')}"
+use_proxy = input("Использовать прокси?(y/N) ").lower()
 
 
 def get_mails():
@@ -27,16 +25,23 @@ def get_wallets():
     return wallets
 
 
+def get_proxy():
+    with open("proxy.txt", "r") as file:
+        proxies = file.readlines()
+
+    return proxies
+
+
 def get_code_from_rambler(login, password):
     mail = imaplib.IMAP4_SSL('imap.rambler.ru')
     mail.login(login, password)
     mail.list()
     mail.select("inbox")
-    result, data = mail.search (None, "ALL")
+    result, data = mail.search(None, "ALL")
     ids = data[0]
     id_list = ids.split()
     latest_email_id = id_list[-1]
-    result, data = mail.fetch(latest_email_id,'(RFC822)')
+    result, data = mail.fetch(latest_email_id, '(RFC822)')
     result, data = mail.uid('search', None, "ALL")
     latest_email_uid = data[0].split()[-1]
     result, data = mail.uid('fetch', latest_email_uid, '(RFC822)')
@@ -44,9 +49,9 @@ def get_code_from_rambler(login, password):
     mail = raw_email.decode('UTF-8')
     el = mail.find("Your verification code")
     els = []
-    for k in range (24,30):
-        t = el+k
-        els.append (mail[t])
+    for k in range(24, 30):
+        t = el + k
+        els.append(mail[t])
     code = ""
     return code.join(els)
 
@@ -57,9 +62,20 @@ def main():
     i = 0
 
     for mail, password in mails.items():
+        if use_proxy == "y":
+            proxy = choice(get_proxy())
+            print(mail + " использует " + proxy)
+            options = {
+                'proxy': {
+                    'https': f'https://{proxy}',
+                    'no_proxy': 'localhost,127.0.0.1'
+                },
+            }
+            driver = webdriver.Chrome(seleniumwire_options=options)
+        else:
+            driver = webdriver.Chrome(seleniumwire_options=options)
         wallet = wallets[i]
         i += 1
-        driver = webdriver.Chrome()
         driver.get(link)
         time.sleep(5)
         option1 = driver.find_element_by_css_selector("[class='email__input']")

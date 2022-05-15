@@ -1,3 +1,2 @@
-mail:password
-mail:password
-mail:password
+mail:pass
+admin@rambler.ru:qwerty21355
