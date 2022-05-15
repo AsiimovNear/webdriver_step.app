@@ -73,7 +73,7 @@ def main():
             }
             driver = webdriver.Chrome(seleniumwire_options=options)
         else:
-            driver = webdriver.Chrome(seleniumwire_options=options)
+            driver = webdriver.Chrome()
         wallet = wallets[i]
         i += 1
         driver.get(link)
